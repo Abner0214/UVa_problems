@@ -9,8 +9,8 @@ int main(){
         int p,n;
         cin >> p >> n;
         cin.ignore();
-        unordered_map<string, int> nums;  // 每個人的編號
-        int numcnt = 0;  // 人數
+        unordered_map<string, int> nums;  // each person's number
+        int numcnt = 0;  // number of people
         vector<vector<int>> graph;
         for (int i = 0; i < p; ++i){
             string s;
@@ -20,11 +20,12 @@ int main(){
             
             vector<int> vec;
             for (int j = 0; j < s.length(); ++j){
-                // 有人和人之間的','和名與姓的','，cnt用來判定是哪一種','
+                // between person and person ',' between last name and first name','
+                // use cnt to differentiate','
                 if (s[j] == ',')++cnt;
-                // 找到一個人
+                // find a person
                 if (s[j] == ',' && cnt % 2 == 0 && cnt != 0){
-                    //將若是新人，將他加入一個map裡面，給他一個編號和graph
+                    // if is a new person, add into the map, and give him a number and graph
                     if(nums.find(s.substr(pos, j-pos)) == nums.end()){
                         nums[s.substr(pos, j-pos)] = numcnt++;
                         graph.push_back(vector<int>());
@@ -32,7 +33,7 @@ int main(){
                     vec.push_back(nums[s.substr(pos, j-pos)]);
                     pos=j+2;
                 }
-                // ':'前面也有一個人
+                // There is a person before':'
                 if (s[j] == ':'){
                     if(nums.find(s.substr(pos, j-pos)) == nums.end()){
                         nums[s.substr(pos,j-pos)] = numcnt++;
@@ -44,19 +45,19 @@ int main(){
             }
             for(int i = 0; i < vec.size(); ++i){
                 for(int j = i+1; j < vec.size(); ++j){
-                    // 製作無向圖
+                    // make undirected graph
                     graph[vec[i]].push_back(vec[j]);
                     graph[vec[j]].push_back(vec[i]);
                 }
             }
         }
         queue<int> q;
-        // 每個人離那傢伙有多遠，-1代表完全在圖內是完全分開的圖
+        // distance, -1 mean two independent graph
         vector<int> erdnums(numcnt, -1);
-        // bfs內用來確定已經走過，走過就不要再走了
+        // bfs 
         vector<bool> visited(numcnt, false);
         int erdnum=0;
-        // Erdos 當成 0，BFS的起點
+        // Erdos set to 0, BFS's start point
         q.push(nums["Erdos, P."]);
         visited[nums["Erdos, P."]] = true;
         while(!q.empty()){
